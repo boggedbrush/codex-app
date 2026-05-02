@@ -145,8 +145,8 @@ describe('Recovered Codex bundle RED contract', () => {
       );
 
       expect(summary.outputRoot).toBe(outputRoot);
-      expect(summary.version).toBe('26.429.20946');
-      expect(summary.buildNumber).toBe('2312');
+      expect(summary.version).toBe('26.429.30905');
+      expect(summary.buildNumber).toBe('2345');
       expect(summary.electronVersion).toBe('41.2.0');
       expect(summary.appAsarSha256).toMatch(/^[a-f0-9]{64}$/);
       if (summary.sourceType === 'dmg') {
@@ -157,8 +157,8 @@ describe('Recovered Codex bundle RED contract', () => {
       expect(mainBundle).toContain('openUrlWithLinuxBrowserSession');
       expect(mainBundle).toContain('require(`../../scripts/linux-browser-launch.js`)');
       expect(mainBundle).not.toContain('require(`../../../../scripts/linux-browser-launch.js`)');
-      expect(mainBundle).toContain(
-        '(n===`win32`||n===`linux`)?{titleBarStyle:`hidden`,titleBarOverlay:vM()}',
+      expect(mainBundle).toMatch(
+        /\(n===`win32`\|\|n===`linux`\)\?\{titleBarStyle:`hidden`,titleBarOverlay:[A-Za-z_$][\w$]*\(\)\}/,
       );
       expect(mainBundle).toContain(
         'process.platform===`linux`?{color:`#2b2f36`,symbolColor:`#ffffff`',
@@ -306,8 +306,8 @@ describe('Recovered Codex bundle RED contract', () => {
     const preloadSource = readDesktopFile('recovered/app-asar-extracted/.vite/build/preload.js');
 
     expect(packageJson.main).toBe('recovered/app-asar-extracted/.vite/build/bootstrap.js');
-    expect(packageJson.version).toBe('26.429.20946');
-    expect(packageJson.codexBuildNumber).toBe('2312');
+    expect(packageJson.version).toBe('26.429.30905');
+    expect(packageJson.codexBuildNumber).toBe('2345');
     expect(packageJson.devDependencies?.electron).toBe('41.2.0');
     expect(packageJson.devDependencies?.['@electron/rebuild']).toBeDefined();
     expect(packageJson.dependencies?.['better-sqlite3']).toBeDefined();
@@ -353,8 +353,8 @@ describe('Recovered Codex bundle RED contract', () => {
     expect(manifest.appAsarSha256).toMatch(/^[a-f0-9]{64}$/);
     expect(manifest.dmgPath).toContain('/Codex.dmg');
     expect(manifest.dmgSha256).toMatch(/^[a-f0-9]{64}$/);
-    expect(manifest.version).toBe('26.429.20946');
-    expect(manifest.buildNumber).toBe('2312');
+    expect(manifest.version).toBe('26.429.30905');
+    expect(manifest.buildNumber).toBe('2345');
     expect(manifest.electronVersion).toBe('41.2.0');
     expect(manifest.patchSummary?.authWebview?.pluginsPage?.results).toEqual(
       expect.arrayContaining([

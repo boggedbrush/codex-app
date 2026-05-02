@@ -1,12 +1,12 @@
 {
   "sourceType": "dmg",
   "dmgPath": "/home/amwill/Applications/codex-app/Codex.dmg",
-  "dmgSha256": "a9dd0b0b1a05686ed1f0092cbb1325773859dedf75ab31b35ca46656b2b92cb6",
-  "appAsarPath": "/tmp/codex-dmg-refresh-F1ctUd/Codex Installer/Codex.app/Contents/Resources/app.asar",
-  "appAsarSha256": "60b2365abaffec2e494fd720e17bf63fe6a4b351e0d6ac8b110c68d2e4d25a83",
+  "dmgSha256": "b0c9ccab01491983c210d7252f4c66897b4156ce2d50bcdfe130b0a1e253b833",
+  "appAsarPath": "/tmp/codex-dmg-refresh-uKv1Qj/Codex Installer/Codex.app/Contents/Resources/app.asar",
+  "appAsarSha256": "00ed2c4baa639c8ce690507adfa5c9eb474703d07bb88f4eeea76c35aa888614",
   "outputRoot": "/home/amwill/Applications/codex-app/desktop/recovered/app-asar-extracted",
-  "version": "26.429.20946",
-  "buildNumber": "2312",
+  "version": "26.429.30905",
+  "buildNumber": "2345",
   "electronVersion": "41.2.0",
   "main": ".vite/build/bootstrap.js",
   "patchSummary": {
