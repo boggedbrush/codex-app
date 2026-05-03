@@ -49,6 +49,10 @@ Use this skill only from `/home/amwill/Applications/codex-app`.
    - Confirm `~/.local/share/applications/codex-desktop.desktop` and
      `~/.config/autostart/codex-desktop.desktop` launch through
      `/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11 ... --ozone-platform=x11`.
+   - Confirm packaged Linux launchers keep that same X11 contract:
+     `desktop/assets/linux/codex-deb.desktop.ejs`,
+     `desktop/assets/linux/codex-appimage.desktop`, and the RPM maker's
+     `desktopTemplate` setting in `desktop/forge.config.ts`.
 
 5. Verify installed app:
    - `readlink -f ~/.local/opt/codex-desktop/current`

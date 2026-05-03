@@ -354,9 +354,14 @@ describe('Linux Ubuntu port regression gates (T4a)', () => {
     expect(forgeConfig).toContain('CODEX_PROTOCOL_MIME_TYPE');
     expect(forgeConfig).toContain('codex-deb.desktop.ejs');
     expect(forgeConfig).toContain('codex-appimage.desktop');
-    expect(debTemplate).toContain('Exec=<%= name %> %u');
+    expect(forgeConfig).toContain('desktopTemplate: linuxRpmDesktopTemplate');
+    expect(debTemplate).toContain(
+      'Exec=/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11 <%= name %> --ozone-platform=x11 %u',
+    );
     expect(debTemplate).toContain('MimeType=<%= mimeType.join(\';\') %>;');
-    expect(appImageDesktop).toContain(`Exec=Codex ${protocolModule.CODEX_PROTOCOL_URL_ARG}`);
+    expect(appImageDesktop).toContain(
+      `Exec=/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11 Codex --ozone-platform=x11 ${protocolModule.CODEX_PROTOCOL_URL_ARG}`,
+    );
     expect(appImageDesktop).toContain(
       `MimeType=${protocolModule.CODEX_PROTOCOL_MIME_TYPE};`,
     );

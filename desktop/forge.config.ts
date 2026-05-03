@@ -23,6 +23,7 @@ const linuxDebDesktopTemplate = path.join(
   linuxDesktopEntryRoot,
   'codex-deb.desktop.ejs',
 );
+const linuxRpmDesktopTemplate = linuxDebDesktopTemplate;
 const linuxAppImageDesktopFile = path.join(
   linuxDesktopEntryRoot,
   'codex-appimage.desktop',
@@ -133,9 +134,10 @@ const config: ForgeConfig = {
         options: {
           bin: 'Codex',
           categories: ['Development'],
+          desktopTemplate: linuxRpmDesktopTemplate,
           icon: linuxPackagerIcon,
         },
-      },
+      } as ConstructorParameters<typeof MakerRpm>[0],
       ['linux'],
     ),
     {
