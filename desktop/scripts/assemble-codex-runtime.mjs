@@ -372,17 +372,23 @@ const mainLinuxAvatarOverlayRaiseMethodPatchAlternatives = [
     target:
       'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}async toggle',
     replacement:
-      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.isFocused()||e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
   },
   {
     target:
       'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}async toggle',
     replacement:
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.isFocused()||e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
+  },
+  {
+    target:
       'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
+    replacement:
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.isFocused()||e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
   },
 ];
 const mainLinuxAvatarOverlayRaiseMethodPatchMarker =
-  'startLinuxTopEnforcement(){';
+  'e.isFocused()||e.showInactive()';
 const mainLinuxAvatarOverlayStopTopTimerPatchAlternatives = [
   {
     target: 'this.cancelMomentum(),this.window=null,this.removeDisplayChangeListeners()',

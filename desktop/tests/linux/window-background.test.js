@@ -46,6 +46,7 @@ describe('Linux window background stability', () => {
     expect(mainBundle).toContain(
       'raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;',
     );
+    expect(mainBundle).toContain('e.isFocused()||e.showInactive()');
     expect(mainBundle).toContain(
       'M.avatarOverlayManager.raiseWindow?.()',
     );

@@ -19,7 +19,9 @@ Use this skill only from `/home/amwill/Applications/codex-app`.
   - Linux open-in target registry and browser-session launcher.
   - Linux pet/avatar overlay stability patches, including the X11/XWayland
     desktop launch contract required for reliable dragging and always-on-top
-    behavior under GNOME Wayland sessions.
+    behavior under GNOME Wayland sessions. The top-enforcement timer must not
+    call `showInactive()` while the pet window is focused, or the pet reply
+    input can lose keyboard focus.
 - Install the rebuilt runtime to `~/.local/opt/codex-desktop/<version>-<build>` and repoint `~/.local/opt/codex-desktop/current`.
 - If the user asks to ship/release, commit, push `main`, tag `v<version>`, and wait for `.github/workflows/linux-release.yml` to publish assets.
 
