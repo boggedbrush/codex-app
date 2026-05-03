@@ -25,8 +25,9 @@ Use this skill only from `/home/amwill/Applications/codex-app`.
     focusable and treat an active reply editor as keyboard-interactive, so
     keystrokes go to the pet instead of the previously focused app.
   - Linux pet/avatar overlay hit testing: drag must start only from the
-    `[data-avatar-mascot="true"]` target, and empty overlay space should use
-    pointer passthrough instead of capturing nearby clicks.
+    `[data-avatar-mascot="true"]` target. Do not use Linux pointer passthrough
+    for the pet window; on this Electron/X11 path it prevents hover/click state
+    from reaching the pet, hiding reply controls and breaking drag.
 - Install the rebuilt runtime to `~/.local/opt/codex-desktop/<version>-<build>` and repoint `~/.local/opt/codex-desktop/current`.
 - If the user asks to ship/release, commit, push `main`, tag `v<version>`, and wait for `.github/workflows/linux-release.yml` to publish assets.
 

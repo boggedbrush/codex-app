@@ -53,9 +53,8 @@ describe('Linux window background stability', () => {
     );
     expect(mainBundle).toContain('keyboardInteractive=!1');
     expect(mainBundle).toContain(
-      'let t=!(this.pointerInteractive||this.keyboardInteractive);',
+      'if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}',
     );
-    expect(mainBundle).toContain('e.setIgnoreMouseEvents(!0,{forward:!0})');
     expect(mainBundle).toContain(
       'raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;',
     );
