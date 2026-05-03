@@ -84,17 +84,14 @@ describe('Linux window background stability', () => {
     expect(mainBundle).not.toContain('setShape');
   });
 
-  test('avatar overlay drag starts only from the mascot visual hit target', () => {
+  test('avatar overlay drag starts only from the mascot hit target', () => {
     const avatarOverlayBundle = fs.readFileSync(
       requireRecoveredWebviewAsset(/^avatar-overlay-page-.*\.js$/),
       'utf8',
     );
 
     expect(avatarOverlayBundle).toContain(
-      '.codex-avatar-root`)??t,r=n.getBoundingClientRect()',
-    );
-    expect(avatarOverlayBundle).toContain(
-      'i*i/(o*o)+a*a/(l*l)>1',
+      'if(e.target.closest(`[data-avatar-mascot="true"]`)==null)return',
     );
     expect(avatarOverlayBundle).toContain('P.current={startedOnMascot:!0');
   });
