@@ -303,6 +303,113 @@ const mainLinuxNativeMenuRemovePatchPattern =
   /process\.platform===`win32`&&([A-Za-z_$][\w$]*)\.removeMenu\(\)/g;
 const mainLinuxNativeMenuRemovePatchReplacement =
   '(process.platform===`win32`||process.platform===`linux`)&&$1.removeMenu()';
+const mainLinuxAvatarOverlayOnTopPatchAlternatives = [
+  {
+    target:
+      't.setAlwaysOnTop(!0,`floating`),t.setMenuBarVisibility(!1),this.addDisplayChangeListeners()',
+    replacement:
+      't.setAlwaysOnTop(!0,`floating`),process.platform===`linux`&&(t.setSkipTaskbar(!0),t.setAlwaysOnTop(!0,`screen-saver`)),t.setMenuBarVisibility(!1),this.addDisplayChangeListeners()',
+  },
+];
+const mainLinuxAvatarOverlayOnTopPatchMarker =
+  'process.platform===`linux`&&(t.setSkipTaskbar(!0),t.setAlwaysOnTop(!0,`screen-saver`))';
+const mainLinuxAvatarOverlayTypePatchAlternatives = [
+  {
+    target:
+      'case`avatarOverlay`:return{...FM({alwaysOnTop:!0,platform:n,resizable:!1,thickFrame:!1}),hasShadow:!1};',
+    replacement:
+      'case`avatarOverlay`:return{...FM({alwaysOnTop:!0,platform:n,resizable:!1,thickFrame:!1}),...n===`linux`?{type:`toolbar`}:{},hasShadow:!1};',
+  },
+];
+const mainLinuxAvatarOverlayTypePatchMarker =
+  'case`avatarOverlay`:return{...FM({alwaysOnTop:!0,platform:n,resizable:!1,thickFrame:!1}),...n===`linux`?{type:`toolbar`}:{},hasShadow:!1};';
+const mainLinuxAvatarOverlayShowPatchAlternatives = [
+  {
+    target:
+      'showWindow(e){if(e.isDestroyed())return;let t=this.isOpen();e.moveTop(),e.showInactive(),!t&&this.isOpen()&&this.broadcastOpenState()}',
+    replacement:
+      'showWindow(e){if(e.isDestroyed())return;let t=this.isOpen();process.platform===`linux`&&(e.setAlwaysOnTop(!0,`screen-saver`),this.startLinuxTopEnforcement()),e.moveTop(),e.showInactive(),!t&&this.isOpen()&&this.broadcastOpenState()}',
+  },
+  {
+    target: 'showWindow(e){e.isDestroyed()||(e.moveTop(),e.showInactive())}',
+    replacement:
+      'showWindow(e){e.isDestroyed()||(process.platform===`linux`&&(e.setAlwaysOnTop(!0,`screen-saver`),this.startLinuxTopEnforcement()),e.moveTop(),e.showInactive())}',
+  },
+  {
+    target:
+      'showWindow(e){if(e.isDestroyed())return;let t=this.isOpen();process.platform===`linux`&&e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive(),!t&&this.isOpen()&&this.broadcastOpenState()}',
+    replacement:
+      'showWindow(e){if(e.isDestroyed())return;let t=this.isOpen();process.platform===`linux`&&(e.setAlwaysOnTop(!0,`screen-saver`),this.startLinuxTopEnforcement()),e.moveTop(),e.showInactive(),!t&&this.isOpen()&&this.broadcastOpenState()}',
+  },
+];
+const mainLinuxAvatarOverlayShowPatchMarker = 'this.startLinuxTopEnforcement()';
+const mainLinuxAvatarOverlayTopTimerPatchAlternatives = [
+  {
+    target: 'momentumTimer=null;mousePassthroughEnabled=!1;placement=`top-end`;',
+    replacement:
+      'momentumTimer=null;mousePassthroughEnabled=!1;topEnforcementTimer=null;placement=`top-end`;',
+  },
+];
+const mainLinuxAvatarOverlayTopTimerPatchMarker = 'topEnforcementTimer=null;';
+const mainLinuxAvatarOverlayPointerPatchAlternatives = [
+  {
+    target:
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+    replacement:
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+  },
+  {
+    target:
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}if(process.platform===`linux`){this.mousePassthroughEnabled=!0,e.setIgnoreMouseEvents(!0);return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+    replacement:
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+  },
+];
+const mainLinuxAvatarOverlayPointerPatchMarker =
+  'if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}';
+const mainLinuxAvatarOverlayRaiseMethodPatchAlternatives = [
+  {
+    target:
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}async toggle',
+    replacement:
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
+  },
+  {
+    target:
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}async toggle',
+    replacement:
+      'isOpen(){let e=this.window;return e!=null&&!e.isDestroyed()&&e.isVisible()}raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;let t=()=>{e.isDestroyed()||(e.setAlwaysOnTop(!0,`screen-saver`),e.moveTop(),e.showInactive())};t();let r=setTimeout(t,0),i=setTimeout(t,80);r.unref?.(),i.unref?.()}startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||(this.topEnforcementTimer=setInterval(()=>{this.raiseWindow()},500),this.topEnforcementTimer.unref?.())}stopLinuxTopEnforcement(){this.topEnforcementTimer!=null&&(clearInterval(this.topEnforcementTimer),this.topEnforcementTimer=null)}async toggle',
+  },
+];
+const mainLinuxAvatarOverlayRaiseMethodPatchMarker =
+  'startLinuxTopEnforcement(){';
+const mainLinuxAvatarOverlayStopTopTimerPatchAlternatives = [
+  {
+    target: 'this.cancelMomentum(),this.window=null,this.removeDisplayChangeListeners()',
+    replacement:
+      'this.cancelMomentum(),this.stopLinuxTopEnforcement(),this.window=null,this.removeDisplayChangeListeners()',
+  },
+];
+const mainLinuxAvatarOverlayStopTopTimerPatchMarker = 'this.stopLinuxTopEnforcement()';
+const mainLinuxAvatarOverlayFocusRaisePatchAlternatives = [
+  {
+    target: 'let ie=()=>{z.refreshApplicationMenu()};',
+    replacement:
+      'let ie=()=>{z.refreshApplicationMenu(),M.avatarOverlayManager.raiseWindow?.()};',
+  },
+];
+const mainLinuxAvatarOverlayFocusRaisePatchMarker =
+  'M.avatarOverlayManager.raiseWindow?.()';
+const mainLinuxAvatarOverlayAvailabilityPatchAlternatives = [
+  {
+    target:
+      'function me(e,{env:t=process.env,platform:n=process.platform}={}){return n!==`win32`||t.CODEX_ELECTRON_ENABLE_WINDOWS_COMPUTER_USE!==`1`?e:{...e,computerUse:!0,computerUseNodeRepl:!0}}',
+    replacement:
+      'function me(e,{env:t=process.env,platform:n=process.platform}={}){let r=n===`linux`?{...e,avatarOverlay:!0}:e;return n!==`win32`||t.CODEX_ELECTRON_ENABLE_WINDOWS_COMPUTER_USE!==`1`?r:{...r,computerUse:!0,computerUseNodeRepl:!0}}',
+  },
+];
+const mainLinuxAvatarOverlayAvailabilityPatchMarker =
+  'n===`linux`?{...e,avatarOverlay:!0}:e';
 const appServerSteerPatchTarget =
   'try{let r=await hh(e,t);e.setPendingSteerTurnId(t,c.id,r);try{return await ph(e,t,n.input,r)}catch(r){let i=mh(r);if(i==null)throw r;return e.updateConversationState(t,e=>{let t=(0,$.default)(e.turns);t?.status===`inProgress`&&(t.turnId=i)}),e.setPendingSteerTurnId(t,c.id,i),await ph(e,t,n.input,i)}}catch(n){throw e.removePendingSteer(t,c.id),i.error(`Error submitting steering turn for conversation`,{safe:{conversationId:t},sensitive:{error:n}}),n}}';
 const appServerSteerPatchReplacement =
@@ -1234,6 +1341,51 @@ function patchCodexMainProcessBundle(extractedAppRoot) {
         pattern: mainLinuxNativeMenuRemovePatchPattern,
         replacement: mainLinuxNativeMenuRemovePatchReplacement,
         marker: mainLinuxNativeMenuRemovePatchMarker,
+      },
+      {
+        label: 'linux avatar overlay uses toolbar window type',
+        alternatives: mainLinuxAvatarOverlayTypePatchAlternatives,
+        marker: mainLinuxAvatarOverlayTypePatchMarker,
+      },
+      {
+        label: 'linux avatar overlay uses stronger always-on-top level',
+        alternatives: mainLinuxAvatarOverlayOnTopPatchAlternatives,
+        marker: mainLinuxAvatarOverlayOnTopPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay refreshes always-on-top before show',
+        alternatives: mainLinuxAvatarOverlayShowPatchAlternatives,
+        marker: mainLinuxAvatarOverlayShowPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay tracks top enforcement timer',
+        alternatives: mainLinuxAvatarOverlayTopTimerPatchAlternatives,
+        marker: mainLinuxAvatarOverlayTopTimerPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay disables unsupported mouse forwarding',
+        alternatives: mainLinuxAvatarOverlayPointerPatchAlternatives,
+        marker: mainLinuxAvatarOverlayPointerPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay exposes raise helper',
+        alternatives: mainLinuxAvatarOverlayRaiseMethodPatchAlternatives,
+        marker: mainLinuxAvatarOverlayRaiseMethodPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay stops top enforcement on close',
+        alternatives: mainLinuxAvatarOverlayStopTopTimerPatchAlternatives,
+        marker: mainLinuxAvatarOverlayStopTopTimerPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay re-raises after app window focus',
+        alternatives: mainLinuxAvatarOverlayFocusRaisePatchAlternatives,
+        marker: mainLinuxAvatarOverlayFocusRaisePatchMarker,
+      },
+      {
+        label: 'linux avatar overlay is available in main process',
+        alternatives: mainLinuxAvatarOverlayAvailabilityPatchAlternatives,
+        marker: mainLinuxAvatarOverlayAvailabilityPatchMarker,
       },
       {
         label: 'linux open-in target registry',

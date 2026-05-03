@@ -28,6 +28,40 @@ describe('Linux window background stability', () => {
     );
   });
 
+  test('main bundle keeps the avatar overlay stable on Linux', () => {
+    const mainBundle = fs.readFileSync(requireRecoveredBuildAsset(/^main-.*\.js$/), 'utf8');
+
+    expect(mainBundle).toContain(
+      'process.platform===`linux`&&(t.setSkipTaskbar(!0),t.setAlwaysOnTop(!0,`screen-saver`))',
+    );
+    expect(mainBundle).toContain(
+      'case`avatarOverlay`:return{...FM({alwaysOnTop:!0,platform:n,resizable:!1,thickFrame:!1}),...n===`linux`?{type:`toolbar`}:{},hasShadow:!1};',
+    );
+    expect(mainBundle).toContain(
+      'process.platform===`linux`&&(e.setAlwaysOnTop(!0,`screen-saver`),this.startLinuxTopEnforcement()),e.moveTop()',
+    );
+    expect(mainBundle).toContain(
+      'if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}',
+    );
+    expect(mainBundle).toContain(
+      'raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;',
+    );
+    expect(mainBundle).toContain(
+      'M.avatarOverlayManager.raiseWindow?.()',
+    );
+    expect(mainBundle).toContain(
+      'n===`linux`?{...e,avatarOverlay:!0}:e',
+    );
+    expect(mainBundle).toContain(
+      'startLinuxTopEnforcement(){process.platform!==`linux`||this.topEnforcementTimer!=null||',
+    );
+    expect(mainBundle).toContain(
+      'this.cancelMomentum(),this.stopLinuxTopEnforcement(),this.window=null,this.removeDisplayChangeListeners()',
+    );
+    expect(mainBundle).not.toContain('applyLinuxWindowShape');
+    expect(mainBundle).not.toContain('setShape');
+  });
+
   test('startup shell keeps a solid background and disables base-logo motion', () => {
     const startupHtml = fs.readFileSync(
       path.join(recoveredRoot, 'webview', 'index.html'),

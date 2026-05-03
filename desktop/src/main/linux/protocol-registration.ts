@@ -8,6 +8,8 @@ export const CODEX_LINUX_DESKTOP_ID = 'codex-desktop.desktop';
 const DEFAULT_APP_NAME = 'Codex';
 const DEFAULT_STARTUP_WM_CLASS = 'Codex';
 const DEFAULT_CATEGORIES = ['Development'];
+const LINUX_X11_EXEC_PREFIX = '/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11';
+const LINUX_X11_OZONE_ARG = '--ozone-platform=x11';
 
 export type LinuxProtocolDesktopEntryOptions = {
   appName?: string;
@@ -60,6 +62,15 @@ function quoteDesktopExec(execPath: string): string {
   return `"${execPath.replace(/(["\\`$])/g, '\\$1')}"`;
 }
 
+function renderCodexDesktopExec(execPath: string, trailingArgs: string[]): string {
+  return [
+    LINUX_X11_EXEC_PREFIX,
+    quoteDesktopExec(execPath),
+    LINUX_X11_OZONE_ARG,
+    ...trailingArgs,
+  ].join(' ');
+}
+
 function sanitizeDesktopValue(label: string, value: string): string {
   assertDesktopField(label, value);
   return value.trim();
@@ -93,7 +104,7 @@ export function renderLinuxProtocolDesktopEntry(
     '[Desktop Entry]',
     'Type=Application',
     `Name=${appName}`,
-    `Exec=${quoteDesktopExec(options.execPath)} ${CODEX_PROTOCOL_URL_ARG}`,
+    `Exec=${renderCodexDesktopExec(options.execPath, [CODEX_PROTOCOL_URL_ARG])}`,
     ...(iconPath ? [`Icon=${iconPath}`] : []),
     'Terminal=false',
     'StartupNotify=true',
@@ -112,7 +123,7 @@ export function renderLinuxAutostartDesktopEntry(
     '[Desktop Entry]',
     'Type=Application',
     `Name=${appName}`,
-    `Exec=${quoteDesktopExec(options.execPath)} --open-at-login`,
+    `Exec=${renderCodexDesktopExec(options.execPath, ['--open-at-login'])}`,
     'Terminal=false',
     'X-GNOME-Autostart-enabled=true',
   ].join('\n');

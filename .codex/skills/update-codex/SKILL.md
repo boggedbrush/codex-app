@@ -17,6 +17,9 @@ Use this skill only from `/home/amwill/Applications/codex-app`.
   - Linux native menu hide/remove behavior.
   - Linux external browser routing for auth and plugin/app flows.
   - Linux open-in target registry and browser-session launcher.
+  - Linux pet/avatar overlay stability patches, including the X11/XWayland
+    desktop launch contract required for reliable dragging and always-on-top
+    behavior under GNOME Wayland sessions.
 - Install the rebuilt runtime to `~/.local/opt/codex-desktop/<version>-<build>` and repoint `~/.local/opt/codex-desktop/current`.
 - If the user asks to ship/release, commit, push `main`, tag `v<version>`, and wait for `.github/workflows/linux-release.yml` to publish assets.
 
@@ -43,11 +46,17 @@ Use this skill only from `/home/amwill/Applications/codex-app`.
    - Copy that staged runtime to `~/.local/opt/codex-desktop/<version>-<build>`.
    - Update `~/.local/opt/codex-desktop/current`.
    - Validate desktop entries and refresh the desktop database.
+   - Confirm `~/.local/share/applications/codex-desktop.desktop` and
+     `~/.config/autostart/codex-desktop.desktop` launch through
+     `/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11 ... --ozone-platform=x11`.
 
 5. Verify installed app:
    - `readlink -f ~/.local/opt/codex-desktop/current`
    - Read installed `resources/app.asar` package metadata and confirm version/build.
    - Search installed `app.asar` for preserved Linux patch markers.
+   - After relaunch, inspect the live process and confirm the Codex command line
+     includes `--ozone-platform=x11`; this is required before judging pet drag
+     or z-order behavior.
 
 6. Release when requested:
    - Commit with a Conventional Commit, usually `chore: refresh linux port to <version>`.

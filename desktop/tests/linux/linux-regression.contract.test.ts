@@ -278,7 +278,7 @@ describe('Linux Ubuntu port regression gates (T4a)', () => {
     expect(protocolModule.CODEX_PROTOCOL_URL_ARG).toBe('%u');
     expect(desktopEntry).toContain('MimeType=x-scheme-handler/codex;');
     expect(desktopEntry).toContain(
-      'Exec="/home/amwill/.local/bin/codex-desktop" %u',
+      'Exec=/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11 "/home/amwill/.local/bin/codex-desktop" --ozone-platform=x11 %u',
     );
     expect(desktopEntry).toContain('StartupWMClass=Codex');
   });
@@ -394,7 +394,9 @@ describe('Linux Ubuntu port regression gates (T4a)', () => {
 
     expect(enabled.enabled).toBe(true);
     expect(enabled.desktopEntryManaged).toBe(true);
-    expect(desktopEntryContents).toContain('Exec="/opt/codex/Codex Desktop" --open-at-login');
+    expect(desktopEntryContents).toContain(
+      'Exec=/usr/bin/env ELECTRON_OZONE_PLATFORM_HINT=x11 "/opt/codex/Codex Desktop" --ozone-platform=x11 --open-at-login',
+    );
     expect(fs.existsSync(startupDesktopEntry)).toBe(false);
     expect(disabled.disabled).toBe(true);
     expect(disabled.desktopEntryManaged).toBe(true);
