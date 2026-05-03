@@ -345,28 +345,40 @@ const mainLinuxAvatarOverlayShowPatchAlternatives = [
 const mainLinuxAvatarOverlayShowPatchMarker = 'this.startLinuxTopEnforcement()';
 const mainLinuxAvatarOverlayTopTimerPatchAlternatives = [
   {
+    target:
+      'momentumTimer=null;mousePassthroughEnabled=!1;topEnforcementTimer=null;placement=`top-end`;',
+    replacement:
+      'momentumTimer=null;mousePassthroughEnabled=!1;topEnforcementTimer=null;keyboardInteractive=!1;placement=`top-end`;',
+  },
+  {
     target: 'momentumTimer=null;mousePassthroughEnabled=!1;placement=`top-end`;',
     replacement:
-      'momentumTimer=null;mousePassthroughEnabled=!1;topEnforcementTimer=null;placement=`top-end`;',
+      'momentumTimer=null;mousePassthroughEnabled=!1;topEnforcementTimer=null;keyboardInteractive=!1;placement=`top-end`;',
   },
 ];
-const mainLinuxAvatarOverlayTopTimerPatchMarker = 'topEnforcementTimer=null;';
+const mainLinuxAvatarOverlayTopTimerPatchMarker = 'keyboardInteractive=!1;';
 const mainLinuxAvatarOverlayPointerPatchAlternatives = [
   {
     target:
       'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
     replacement:
-      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}let t=!(this.pointerInteractive||this.keyboardInteractive);if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
   },
   {
     target:
       'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}if(process.platform===`linux`){this.mousePassthroughEnabled=!0,e.setIgnoreMouseEvents(!0);return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
     replacement:
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}let t=!(this.pointerInteractive||this.keyboardInteractive);if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+  },
+  {
+    target:
       'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}let t=!this.pointerInteractive;if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
+    replacement:
+      'applyPointerInteractivityPolicy(){let e=this.window;if(e==null||e.isDestroyed()){this.mousePassthroughEnabled=!1;return}let t=!(this.pointerInteractive||this.keyboardInteractive);if(this.mousePassthroughEnabled!==t){if(this.mousePassthroughEnabled=t,t){e.setIgnoreMouseEvents(!0,{forward:!0});return}e.setIgnoreMouseEvents(!1),this.refreshCursorAtCurrentMousePosition(e)}}',
   },
 ];
 const mainLinuxAvatarOverlayPointerPatchMarker =
-  'if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}';
+  '!(this.pointerInteractive||this.keyboardInteractive)';
 const mainLinuxAvatarOverlayRaiseMethodPatchAlternatives = [
   {
     target:
@@ -406,6 +418,32 @@ const mainLinuxAvatarOverlayFocusRaisePatchAlternatives = [
 ];
 const mainLinuxAvatarOverlayFocusRaisePatchMarker =
   'M.avatarOverlayManager.raiseWindow?.()';
+const mainLinuxAvatarOverlayFocusableWindowPatchAlternatives = [
+  {
+    target:
+      'appearance:`avatarOverlay`,focusable:!1,show:!1,initialRoute:pO',
+    replacement:
+      'appearance:`avatarOverlay`,focusable:process.platform===`linux`?!0:!1,show:!1,initialRoute:pO',
+  },
+];
+const mainLinuxAvatarOverlayFocusableWindowPatchMarker =
+  'focusable:process.platform===`linux`?!0:!1';
+const mainLinuxAvatarOverlayKeyboardFocusPatchAlternatives = [
+  {
+    target:
+      'if(this.applyPointerInteractivityPolicy(),!t){r.setFocusable(!1);return}r.setFocusable(!0),r.show(),process.platform===`darwin`&&n.app.focus({steal:!0}),r.focus(),r.webContents.focus()',
+    replacement:
+      'this.keyboardInteractive=t;if(this.applyPointerInteractivityPolicy(),!t){process.platform!==`linux`&&r.setFocusable(!1);return}r.setFocusable(!0),r.show(),(process.platform===`darwin`||process.platform===`linux`)&&n.app.focus({steal:!0}),r.focus(),r.webContents.focus()',
+  },
+  {
+    target:
+      'if(this.applyPointerInteractivityPolicy(),!t){process.platform!==`linux`&&r.setFocusable(!1);return}r.setFocusable(!0),r.show(),(process.platform===`darwin`||process.platform===`linux`)&&n.app.focus({steal:!0}),r.focus(),r.webContents.focus()',
+    replacement:
+      'this.keyboardInteractive=t;if(this.applyPointerInteractivityPolicy(),!t){process.platform!==`linux`&&r.setFocusable(!1);return}r.setFocusable(!0),r.show(),(process.platform===`darwin`||process.platform===`linux`)&&n.app.focus({steal:!0}),r.focus(),r.webContents.focus()',
+  },
+];
+const mainLinuxAvatarOverlayKeyboardFocusPatchMarker =
+  'this.keyboardInteractive=t;if(this.applyPointerInteractivityPolicy()';
 const mainLinuxAvatarOverlayAvailabilityPatchAlternatives = [
   {
     target:
@@ -416,6 +454,16 @@ const mainLinuxAvatarOverlayAvailabilityPatchAlternatives = [
 ];
 const mainLinuxAvatarOverlayAvailabilityPatchMarker =
   'n===`linux`?{...e,avatarOverlay:!0}:e';
+const avatarOverlayDirectMascotDragPatchAlternatives = [
+  {
+    target:
+      'J=e=>{e.button!==0||!(e.target instanceof Element)||e.target.closest(`.no-drag`)!=null||(e.preventDefault(),e.currentTarget.setPointerCapture?.(e.pointerId),P.current={startedOnMascot:e.target.closest(`[data-avatar-mascot="true"]`)!=null,hasMoved:!1,pointerId:e.pointerId,samples:[V(e)],screenX:e.screenX,screenY:e.screenY},f.dispatchMessage(`avatar-overlay-drag-start`,{pointerWindowX:e.clientX,pointerWindowY:e.clientY}),h(!0),s(null))}',
+    replacement:
+      'J=e=>{if(e.button!==0||!(e.target instanceof Element)||e.target.closest(`.no-drag`)!=null)return;if(e.target.closest(`[data-avatar-mascot="true"]`)==null)return;e.preventDefault(),e.currentTarget.setPointerCapture?.(e.pointerId),P.current={startedOnMascot:!0,hasMoved:!1,pointerId:e.pointerId,samples:[V(e)],screenX:e.screenX,screenY:e.screenY},f.dispatchMessage(`avatar-overlay-drag-start`,{pointerWindowX:e.clientX,pointerWindowY:e.clientY}),h(!0),s(null)}',
+  },
+];
+const avatarOverlayDirectMascotDragPatchMarker =
+  'if(e.target.closest(`[data-avatar-mascot="true"]`)==null)return';
 const appServerSteerPatchTarget =
   'try{let r=await hh(e,t);e.setPendingSteerTurnId(t,c.id,r);try{return await ph(e,t,n.input,r)}catch(r){let i=mh(r);if(i==null)throw r;return e.updateConversationState(t,e=>{let t=(0,$.default)(e.turns);t?.status===`inProgress`&&(t.turnId=i)}),e.setPendingSteerTurnId(t,c.id,i),await ph(e,t,n.input,i)}}catch(n){throw e.removePendingSteer(t,c.id),i.error(`Error submitting steering turn for conversation`,{safe:{conversationId:t},sensitive:{error:n}}),n}}';
 const appServerSteerPatchReplacement =
@@ -1369,7 +1417,7 @@ function patchCodexMainProcessBundle(extractedAppRoot) {
         marker: mainLinuxAvatarOverlayTopTimerPatchMarker,
       },
       {
-        label: 'linux avatar overlay disables unsupported mouse forwarding',
+        label: 'linux avatar overlay passes through empty space',
         alternatives: mainLinuxAvatarOverlayPointerPatchAlternatives,
         marker: mainLinuxAvatarOverlayPointerPatchMarker,
       },
@@ -1387,6 +1435,16 @@ function patchCodexMainProcessBundle(extractedAppRoot) {
         label: 'linux avatar overlay re-raises after app window focus',
         alternatives: mainLinuxAvatarOverlayFocusRaisePatchAlternatives,
         marker: mainLinuxAvatarOverlayFocusRaisePatchMarker,
+      },
+      {
+        label: 'linux avatar overlay remains focusable for reply input',
+        alternatives: mainLinuxAvatarOverlayFocusableWindowPatchAlternatives,
+        marker: mainLinuxAvatarOverlayFocusableWindowPatchMarker,
+      },
+      {
+        label: 'linux avatar overlay steals focus for reply input',
+        alternatives: mainLinuxAvatarOverlayKeyboardFocusPatchAlternatives,
+        marker: mainLinuxAvatarOverlayKeyboardFocusPatchMarker,
       },
       {
         label: 'linux avatar overlay is available in main process',
@@ -1431,6 +1489,20 @@ function patchCodexStartupShell(extractedAppRoot) {
         label: 'startup shell remove keyframes',
         target: startupKeyframesPatchTarget,
         replacement: startupKeyframesPatchReplacement,
+      },
+    ]),
+  );
+}
+
+function patchCodexAvatarOverlayRenderer(extractedAppRoot) {
+  const avatarOverlayPath = findExtractedWebviewAsset(extractedAppRoot, 'avatar-overlay-page-');
+
+  return summarizePatchResults(
+    applyPatchesToFile(avatarOverlayPath, [
+      {
+        label: 'avatar overlay drag starts only on mascot',
+        alternatives: avatarOverlayDirectMascotDragPatchAlternatives,
+        marker: avatarOverlayDirectMascotDragPatchMarker,
       },
     ]),
   );
@@ -1694,6 +1766,7 @@ export function patchExtractedCodexApp(extractedAppRoot) {
     bootstrap: patchCodexBootstrap(extractedAppRoot),
     mainProcess: patchCodexMainProcessBundle(extractedAppRoot),
     startupShell: patchCodexStartupShell(extractedAppRoot),
+    avatarOverlayRenderer: patchCodexAvatarOverlayRenderer(extractedAppRoot),
     authWebview: patchCodexAuthWebviewBundles(extractedAppRoot),
     modelSettings: patchCodexModelSettingsBundle(extractedAppRoot),
   };

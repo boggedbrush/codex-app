@@ -21,7 +21,12 @@ Use this skill only from `/home/amwill/Applications/codex-app`.
     desktop launch contract required for reliable dragging and always-on-top
     behavior under GNOME Wayland sessions. The top-enforcement timer must not
     call `showInactive()` while the pet window is focused, or the pet reply
-    input can lose keyboard focus.
+    input can lose keyboard focus. On Linux the pet window must remain
+    focusable and treat an active reply editor as keyboard-interactive, so
+    keystrokes go to the pet instead of the previously focused app.
+  - Linux pet/avatar overlay hit testing: drag must start only from the
+    `[data-avatar-mascot="true"]` target, and empty overlay space should use
+    pointer passthrough instead of capturing nearby clicks.
 - Install the rebuilt runtime to `~/.local/opt/codex-desktop/<version>-<build>` and repoint `~/.local/opt/codex-desktop/current`.
 - If the user asks to ship/release, commit, push `main`, tag `v<version>`, and wait for `.github/workflows/linux-release.yml` to publish assets.
 

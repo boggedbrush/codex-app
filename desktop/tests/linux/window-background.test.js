@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const recoveredRoot = path.join(__dirname, '..', '..', 'recovered', 'app-asar-extracted');
 const recoveredBuildRoot = path.join(recoveredRoot, '.vite', 'build');
+const recoveredWebviewAssetsRoot = path.join(recoveredRoot, 'webview', 'assets');
 
 function requireRecoveredBuildAsset(pattern) {
   const assetName = fs.readdirSync(recoveredBuildRoot).find((entry) => pattern.test(entry));
@@ -12,6 +13,16 @@ function requireRecoveredBuildAsset(pattern) {
   }
 
   return path.join(recoveredBuildRoot, assetName);
+}
+
+function requireRecoveredWebviewAsset(pattern) {
+  const assetName = fs.readdirSync(recoveredWebviewAssetsRoot).find((entry) => pattern.test(entry));
+
+  if (!assetName) {
+    throw new Error(`Missing recovered webview asset matching ${pattern}`);
+  }
+
+  return path.join(recoveredWebviewAssetsRoot, assetName);
 }
 
 describe('Linux window background stability', () => {
@@ -40,13 +51,24 @@ describe('Linux window background stability', () => {
     expect(mainBundle).toContain(
       'process.platform===`linux`&&(e.setAlwaysOnTop(!0,`screen-saver`),this.startLinuxTopEnforcement()),e.moveTop()',
     );
+    expect(mainBundle).toContain('keyboardInteractive=!1');
     expect(mainBundle).toContain(
-      'if(process.platform===`linux`){this.mousePassthroughEnabled=!1,e.setIgnoreMouseEvents(!1);return}',
+      'let t=!(this.pointerInteractive||this.keyboardInteractive);',
     );
+    expect(mainBundle).toContain('e.setIgnoreMouseEvents(!0,{forward:!0})');
     expect(mainBundle).toContain(
       'raiseWindow(){let e=this.window;if(e==null||e.isDestroyed()||!e.isVisible()||process.platform!==`linux`)return;',
     );
     expect(mainBundle).toContain('e.isFocused()||e.showInactive()');
+    expect(mainBundle).toContain(
+      'focusable:process.platform===`linux`?!0:!1',
+    );
+    expect(mainBundle).toContain(
+      'this.keyboardInteractive=t;if(this.applyPointerInteractivityPolicy()',
+    );
+    expect(mainBundle).toContain(
+      '(process.platform===`darwin`||process.platform===`linux`)&&n.app.focus({steal:!0})',
+    );
     expect(mainBundle).toContain(
       'M.avatarOverlayManager.raiseWindow?.()',
     );
@@ -61,6 +83,18 @@ describe('Linux window background stability', () => {
     );
     expect(mainBundle).not.toContain('applyLinuxWindowShape');
     expect(mainBundle).not.toContain('setShape');
+  });
+
+  test('avatar overlay drag starts only from the mascot hit target', () => {
+    const avatarOverlayBundle = fs.readFileSync(
+      requireRecoveredWebviewAsset(/^avatar-overlay-page-.*\.js$/),
+      'utf8',
+    );
+
+    expect(avatarOverlayBundle).toContain(
+      'if(e.target.closest(`[data-avatar-mascot="true"]`)==null)return',
+    );
+    expect(avatarOverlayBundle).toContain('P.current={startedOnMascot:!0');
   });
 
   test('startup shell keeps a solid background and disables base-logo motion', () => {
