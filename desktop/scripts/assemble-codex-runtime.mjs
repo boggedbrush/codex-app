@@ -809,6 +809,24 @@ const rendererUndoUnifiedDiffPreferencePatchAlternatives = [
       'C=[];if((e.patchBatches==null||e.patchBatches.length===1)&&e.unifiedDiff.length>0&&a!=null)C.push({cwd:a,diff:e.unifiedDiff});else for(let t of e.patchBatches??[]){let e=t.cwd??a,n=m?.origins.find(t=>t.dir===e)?.root??null,r=rf(t.changes,e,n);e==null||r.length===0||C.push({cwd:e,diff:r})}',
   },
 ];
+const rendererGoalsDefaultFeatureOverridePatchMarker = '`tool_suggest`,`goals`,kr';
+const rendererGoalsDefaultFeatureOverridePatchAlternatives = [
+  {
+    target:
+      'var YA=[`apps`,`memories`,`plugins`,`tool_call_mcp_elicitation`,`tool_search`,`tool_suggest`,kr];',
+    replacement:
+      'var YA=[`apps`,`memories`,`plugins`,`tool_call_mcp_elicitation`,`tool_search`,`tool_suggest`,`goals`,kr];',
+  },
+];
+const rendererDesktopGoalsFeaturePatchMarker = 'control:u,goals:!0,multiWindow:d';
+const rendererDesktopGoalsFeaturePatchAlternatives = [
+  {
+    target:
+      'computerUse:c.available,computerUseNodeRepl:c.available&&l,control:u,multiWindow:d})',
+    replacement:
+      'computerUse:c.available,computerUseNodeRepl:c.available&&l,control:u,goals:!0,multiWindow:d})',
+  },
+];
 const modelSettingsSavedConfigPatchTarget =
   'queryFn:async()=>{try{return await zt(r,e)}catch{return null}},queryKey:[...Ss,t,e],staleTime:W.FIVE_MINUTES';
 const modelSettingsSavedConfigPatchReplacement =
@@ -1611,6 +1629,16 @@ function patchCodexAuthWebviewBundles(extractedAppRoot) {
           target: patch.target,
           replacement: patch.replacement,
         })),
+        {
+          label: 'renderer forwards goals feature overrides',
+          alternatives: rendererGoalsDefaultFeatureOverridePatchAlternatives,
+          marker: rendererGoalsDefaultFeatureOverridePatchMarker,
+        },
+        {
+          label: 'renderer advertises goals desktop feature',
+          alternatives: rendererDesktopGoalsFeaturePatchAlternatives,
+          marker: rendererDesktopGoalsFeaturePatchMarker,
+        },
         ]),
       ).concat(
         applyPatchesToFile(undoBundlePath, [
