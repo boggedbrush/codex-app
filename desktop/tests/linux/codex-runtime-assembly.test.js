@@ -117,6 +117,40 @@ describe('codex runtime assembly guards', () => {
     ]);
   });
 
+  test('allows the fast mode service-tier guard to be applied idempotently', () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-runtime-patch-'));
+    const filePath = path.join(tempRoot, 'use-is-fast-mode-enabled.js');
+
+    fs.writeFileSync(
+      filePath,
+      'function m(e){return(e.serviceTiers?.length??0)>0||e.additionalSpeedTiers?.includes(u)===!0}\n',
+      'utf8',
+    );
+
+    const result = runAssemblySnippet(
+      `
+      const patchResult = runtime.applyPatchesToFile(${JSON.stringify(filePath)}, [{
+        label: 'fast mode missing service tiers guard',
+        target: 'return e.serviceTiers.length>0||e.additionalSpeedTiers?.includes(u)===!0',
+        replacement: 'return(e.serviceTiers?.length??0)>0||e.additionalSpeedTiers?.includes(u)===!0',
+        marker: 'serviceTiers?.length??0',
+      }]);
+      process.stdout.write(JSON.stringify(patchResult));
+      `,
+      tempRoot,
+    );
+
+    expect(result.status).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual([
+      {
+        label: 'fast mode missing service tiers guard',
+        patched: false,
+        skipped: true,
+        reason: 'fast mode missing service tiers guard replacement already present',
+      },
+    ]);
+  });
+
   test('hydrates lfs pointer files before copying required runtime helpers', () => {
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-runtime-lfs-'));
     const filePath = path.join(tempRoot, 'codex');
