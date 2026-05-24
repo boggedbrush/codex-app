@@ -440,8 +440,14 @@ describe('Recovered Codex bundle RED contract', () => {
 
     expect(fastModeBundle).toContain('serviceTiers?.length??0');
     expect(fastModeBundle).not.toContain('serviceTiers.length>0');
+    expect(fastModeBundle).not.toMatch(/model\.serviceTiers\.(length|some|map|includes)/);
+    expect(fastModeBundle).not.toMatch(/serviceTiers\.(length|some|map|includes)/);
     expect(assembleScript).toContain('fast mode missing service tiers guard');
     expect(assembleScript).toContain('serviceTiers?.length??0');
+    expect(assembleScript).not.toContain('model.serviceTiers.length');
+    expect(assembleScript).not.toContain('model.serviceTiers.some');
+    expect(assembleScript).not.toContain('model.serviceTiers.map');
+    expect(assembleScript).not.toContain('model.serviceTiers.includes');
     expect(manifest.patchSummary?.fastMode?.results).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ label: 'fast mode missing service tiers guard' }),

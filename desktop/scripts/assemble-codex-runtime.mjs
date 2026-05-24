@@ -1024,11 +1024,10 @@ const rendererDesktopGoalsFeaturePatchAlternatives = [
       'computerUse:c.available,computerUseNodeRepl:c.available&&l,control:u,goals:!0,multiWindow:d})',
   },
 ];
-const fastModeModelServiceTiersPatchTarget =
+export const fastModeModelServiceTiersPatchTarget =
   'return e.serviceTiers.length>0||e.additionalSpeedTiers?.includes(u)===!0';
-const fastModeModelServiceTiersPatchReplacement =
+export const fastModeModelServiceTiersPatchReplacement =
   'return(e.serviceTiers?.length??0)>0||e.additionalSpeedTiers?.includes(u)===!0';
-const fastModeModelServiceTiersPatchMarker = 'serviceTiers?.length??0';
 const composerGoalsSlashCommandPatchMarker = 'id:`goals`,title:`Goals`';
 const composerGoalsSlashCommandPatchAlternatives = [
   {
@@ -2057,6 +2056,42 @@ function patchCodexModelSettingsBundle(extractedAppRoot) {
   );
 }
 
+export function patchFastModeServiceTiersGuard(filePath) {
+  assertExists(filePath, 'Patched extracted asset');
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  if (source.includes(fastModeModelServiceTiersPatchTarget)) {
+    fs.writeFileSync(
+      filePath,
+      source
+        .split(fastModeModelServiceTiersPatchTarget)
+        .join(fastModeModelServiceTiersPatchReplacement),
+      'utf8',
+    );
+    return [
+      {
+        label: 'fast mode missing service tiers guard',
+        patched: true,
+        skipped: false,
+        reason: null,
+      },
+    ];
+  }
+
+  if (source.includes(fastModeModelServiceTiersPatchReplacement)) {
+    return [
+      {
+        label: 'fast mode missing service tiers guard',
+        patched: false,
+        skipped: true,
+        reason: 'fast mode missing service tiers guard replacement already present',
+      },
+    ];
+  }
+
+  throw buildMissingPatchTargetError('fast mode missing service tiers guard', filePath);
+}
+
 function patchCodexFastModeBundle(extractedAppRoot) {
   const fastModePath = findOptionalExtractedWebviewAsset(
     extractedAppRoot,
@@ -2067,20 +2102,7 @@ function patchCodexFastModeBundle(extractedAppRoot) {
     return summarizePatchResults([]);
   }
 
-  return summarizePatchResults(
-    applyPatchesToFile(fastModePath, [
-      {
-        label: 'fast mode missing service tiers guard',
-        alternatives: [
-          {
-            target: fastModeModelServiceTiersPatchTarget,
-            replacement: fastModeModelServiceTiersPatchReplacement,
-          },
-        ],
-        marker: fastModeModelServiceTiersPatchMarker,
-      },
-    ]),
-  );
+  return summarizePatchResults(patchFastModeServiceTiersGuard(fastModePath));
 }
 
 function patchCodexAppServerHooks(extractedAppRoot) {
